@@ -265,7 +265,8 @@
 
     const ql = q.toLowerCase();
     // "Bio" or "Bio Smith": only ever look at the Biography shelves
-    const bioQuery = /^bio\b/i.test(q);
+    // "Bio " (with a space after) = biography shelves; plain "Bio" = normal author search (AAA-BLA)
+    const bioQuery = /^\s*bio\s/i.test(raw);
     const bioOnly  = /^bio$/i.test(q);
 
     let matches = shelves.filter(s => {
