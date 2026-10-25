@@ -4,20 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Find Your Shelf</title>
-
   <style>
     :root { --ink:#3a2413; --gold:#ffcf40; --glow:#ffb020; }
     * { box-sizing: border-box; }
     html, body { margin:0; background:#241609; font-family:Georgia, serif; color:var(--ink); }
     body { padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0) 0; }
     .wrap { max-width:1200px; margin:0 auto; padding:16px 14px 34px; }
-
-    /* HEADER */
     header { text-align:center; color:#f3e6c8; margin-bottom:8px; }
     h1 { font-size:1.35rem; margin:0 0 4px; }
     header p { margin:0; color:#cbb488; font-size:.88rem; }
-
-    /* SEARCH BAR + CHIPS + STATUS */
     .searchbar { display:flex; gap:8px; max-width:480px; margin:14px auto 8px; }
     #q { flex:1; padding:10px 12px; font-size:1rem; border-radius:7px; border:2px solid #8a5f3a; background:#fbf3e0; color:var(--ink); font-family:inherit; }
     #go { padding:10px 18px; border:none; border-radius:7px; background:#8a5f3a; color:#fff8ea; cursor:pointer; font-family:inherit; }
@@ -29,43 +24,27 @@
     #status { text-align:center; min-height:1.4em; margin:0 auto 12px; max-width:640px; font-size:.92rem; color:#f3e6c8; }
     #status.notfound { color:#e8a37b; }
     #status.found b { color:var(--gold); }
-
-    /* ============================================================
-       THE MAP
-       Built entirely from HTML/CSS elements (no photo). Coordinates
-       are percentages of the map's 1061 x 566 layout, so it scales.
-       ============================================================ */
     .mapscroll { overflow-x:auto; }
     .map {
-      position:relative;
-      width:100%;
-      min-width:680px;
-      aspect-ratio:1061 / 566;
-      container-type:inline-size;   /* lets text scale with the map (cqw units) */
+      position:relative; width:100%; min-width:680px; aspect-ratio:1061 / 566;
+      container-type:inline-size;
       background:
         repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 3px,rgba(90,60,20,.06) 3px 7px,rgba(255,255,255,.03) 7px 9px),
         repeating-linear-gradient(0deg,rgba(255,255,255,.09) 0 12px,rgba(0,0,0,.03) 12px 26px),
         #cfa56e;
-      border:5px solid #6b4a2e;
-      border-radius:3px;
-      box-shadow:0 10px 26px rgba(0,0,0,.5);
-      overflow:hidden;
-      font-family:Arial, Helvetica, sans-serif;
+      border:5px solid #6b4a2e; border-radius:3px; box-shadow:0 10px 26px rgba(0,0,0,.5);
+      overflow:hidden; font-family:Arial, Helvetica, sans-serif;
     }
     .map .mp-shelf { position:absolute; background:linear-gradient(#eaa870,#dc9455); border:1.5px solid #7a4622; box-shadow:1px 2px 2px rgba(60,30,10,.35); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#1c1108; font-size:1.05cqw; white-space:nowrap; }
     .map .mp-label { position:absolute; color:#1c1108; font-size:1cqw; white-space:nowrap; pointer-events:none; }
     .map .mp-desk  { position:absolute; background:linear-gradient(#a05a2d,#7f4321); border:2px solid #5c2f14; box-shadow:inset 0 0 0 2px #b8703f,2px 3px 4px rgba(50,25,10,.4); }
     .map .mp-table { position:absolute; background:linear-gradient(#bf7e48,#a5652f); border:1.5px solid #6b3f1f; box-shadow:1px 2px 2px rgba(60,30,10,.35); }
     .map .mp-door  { position:absolute; background:#6b3a1c; clip-path:polygon(100% 0,0 50%,100% 100%,100% 90%,20% 50%,100% 10%); }
-
-    /* HOTSPOTS: invisible until .glow is added by the search */
     .hot { position:absolute; background:transparent; cursor:default; }
     .hot.glow {
-      background:rgba(255,207,64,.28);
-      border-radius:2px;
+      background:rgba(255,207,64,.28); border-radius:2px;
       box-shadow:0 0 6px 3px var(--glow), 0 0 22px 9px rgba(255,176,32,.9);
-      animation:pulse 1.1s ease-in-out infinite alternate;
-      z-index:5;
+      animation:pulse 1.1s ease-in-out infinite alternate; z-index:5;
     }
     @keyframes pulse {
       from { box-shadow:0 0 6px 3px var(--glow), 0 0 16px 6px rgba(255,176,32,.7); }
@@ -87,30 +66,29 @@
     <button id="go">Search</button>
   </div>
 
-  <div class="chips">
-  </div>
+  <div class="chips"></div>
   <div id="status"></div>
 
   <div class="mapscroll">
   <div class="map" id="map">
-    <div class="mp-shelf" style="left:2.262%;top:1.237%;width:6.692%;height:4.064%;transform:rotate(0deg);">391 - 551</div>
-    <div class="mp-shelf" style="left:9.048%;top:1.237%;width:6.880%;height:4.064%;transform:rotate(0deg);">551 - 616.8</div>
-    <div class="mp-shelf" style="left:16.211%;top:1.237%;width:6.880%;height:4.064%;transform:rotate(0deg);">616.8 - 641.5</div>
-    <div class="mp-shelf" style="left:23.280%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);">641.5 - 741.5</div>
-    <div class="mp-shelf" style="left:30.443%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);">741.5 - 799.9</div>
-    <div class="mp-shelf" style="left:37.700%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);">Poetry</div>
-    <div class="mp-shelf" style="left:44.863%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);">AAA-BLA</div>
-    <div class="mp-shelf" style="left:52.121%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);">BLO - CLA</div>
-    <div class="mp-shelf" style="left:59.378%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);">CLA - EMI</div>
-    <div class="mp-shelf" style="left:66.541%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);">END - GRE</div>
-    <div class="mp-shelf" style="left:73.798%;top:1.237%;width:6.786%;height:4.064%;transform:rotate(0deg);">GRI - IZZ</div>
-    <div class="mp-shelf" style="left:80.867%;top:1.237%;width:6.880%;height:4.064%;transform:rotate(0deg);">JAC - LAW</div>
-    <div class="mp-shelf" style="left:88.030%;top:1.237%;width:6.786%;height:4.064%;transform:rotate(0deg);">LAY - OCO</div>
-    <div class="mp-shelf" style="left:8.011%;top:15.371%;width:7.069%;height:3.710%;transform:rotate(0deg);">362.8 - 363.9</div>
-    <div class="mp-shelf" style="left:15.269%;top:15.371%;width:6.975%;height:3.710%;transform:rotate(0deg);">364 - 371.8</div>
-    <div class="mp-shelf" style="left:22.432%;top:15.371%;width:6.975%;height:3.710%;transform:rotate(0deg);">371.8 - 391</div>
+    <div class="mp-shelf" style="left:2.262%;top:1.237%;width:6.692%;height:4.064%;">391 - 551</div>
+    <div class="mp-shelf" style="left:9.048%;top:1.237%;width:6.880%;height:4.064%;">551 - 616.8</div>
+    <div class="mp-shelf" style="left:16.211%;top:1.237%;width:6.880%;height:4.064%;">616.8 - 641.5</div>
+    <div class="mp-shelf" style="left:23.280%;top:1.237%;width:6.975%;height:4.064%;">641.5 - 741.5</div>
+    <div class="mp-shelf" style="left:30.443%;top:1.237%;width:6.975%;height:4.064%;">741.5 - 799.9</div>
+    <div class="mp-shelf" style="left:37.700%;top:1.237%;width:6.975%;height:4.064%;">Poetry</div>
+    <div class="mp-shelf" style="left:44.863%;top:1.237%;width:6.975%;height:4.064%;">AAA-BLA</div>
+    <div class="mp-shelf" style="left:52.121%;top:1.237%;width:6.975%;height:4.064%;">BLO - CLA</div>
+    <div class="mp-shelf" style="left:59.378%;top:1.237%;width:6.975%;height:4.064%;">CLA - EMI</div>
+    <div class="mp-shelf" style="left:66.541%;top:1.237%;width:6.975%;height:4.064%;">END - GRE</div>
+    <div class="mp-shelf" style="left:73.798%;top:1.237%;width:6.786%;height:4.064%;">GRI - IZZ</div>
+    <div class="mp-shelf" style="left:80.867%;top:1.237%;width:6.880%;height:4.064%;">JAC - LAW</div>
+    <div class="mp-shelf" style="left:88.030%;top:1.237%;width:6.786%;height:4.064%;">LAY - OCO</div>
+    <div class="mp-shelf" style="left:8.011%;top:15.371%;width:7.069%;height:3.710%;">362.8 - 363.9</div>
+    <div class="mp-shelf" style="left:15.269%;top:15.371%;width:6.975%;height:3.710%;">364 - 371.8</div>
+    <div class="mp-shelf" style="left:22.432%;top:15.371%;width:6.975%;height:3.710%;">371.8 - 391</div>
     <div class="mp-shelf" style="left:-1.225%;top:21.908%;width:6.975%;height:3.887%;transform:rotate(-90deg);">341.5 - 362.76</div>
-    <div class="mp-shelf" style="left:-1.178%;top:35.336%;width:6.880%;height:3.887%;transform:rotate(-90deg);">232 - 341.41</div>
+    <div class="mp-shelf" style="left:-1.178%;top:35.336%;width:6.880%;height:3.887%;transform:rotate(-90deg);">323 - 341.41</div>
     <div class="mp-shelf" style="left:-1.084%;top:49.117%;width:6.692%;height:3.887%;transform:rotate(-90deg);">305 - 323</div>
     <div class="mp-shelf" style="left:-1.131%;top:62.014%;width:6.786%;height:3.887%;transform:rotate(-90deg);">290 - 305</div>
     <div class="mp-shelf" style="left:-1.367%;top:75.618%;width:7.257%;height:3.887%;transform:rotate(-90deg);">000-289.3</div>
@@ -119,7 +97,6 @@
     <div class="mp-shelf" style="left:93.591%;top:39.929%;width:6.598%;height:3.887%;transform:rotate(90deg);">STO - ZOO</div>
     <div class="mp-shelf" style="left:93.591%;top:54.064%;width:6.598%;height:3.887%;transform:rotate(90deg);">Spanish &amp;</div>
     <div class="mp-label" style="left:94.816%;top:55.654%;transform:translate(-50%,-50%) rotate(90deg)">Book Club</div>
-    <!--<div class="mp-shelf" style="left:22.243%;top:21.555%;width:12.064%;height:3.887%;transform:rotate(-18deg);"></div>-->
     <div class="mp-shelf" style="left:21.866%;top:25.972%;width:12.064%;height:3.887%;transform:rotate(-18deg);"></div>
     <div class="mp-shelf" style="left:21.489%;top:35.159%;width:7.163%;height:4.594%;transform:rotate(-18deg);"></div>
     <div class="mp-shelf" style="left:28.464%;top:31.272%;width:7.163%;height:4.594%;transform:rotate(-18deg);"></div>
@@ -138,7 +115,7 @@
     <div class="mp-label" style="left:25.448%;top:41.873%;transform:translate(-50%,-50%) rotate(-18deg)">973 - 973.7</div>
     <div class="mp-label" style="left:32.045%;top:37.633%;transform:translate(-50%,-50%) rotate(-18deg)">973.7 - 973.92</div>
     <div class="mp-label" style="left:39.208%;top:33.039%;transform:translate(-50%,-50%) rotate(-18deg)">973.92 - 999</div>
-    <div class="mp-label" style="left:25.25%;top:47.823%;transform:translate(-50%,-50%) rotate(-18deg)">973 - 973.3</div>  
+    <div class="mp-label" style="left:25.25%;top:47.823%;transform:translate(-50%,-50%) rotate(-18deg)">973 - 973.3</div>
     <div class="mp-label" style="left:31.988%;top:44.290%;transform:translate(-50%,-50%) rotate(-18deg)">958 - 973</div>
     <div class="mp-label" style="left:38.774%;top:40.049%;transform:translate(-50%,-50%) rotate(-18deg)">943 - 957.9</div>
     <div class="mp-label" style="left:26.107%;top:54.947%;transform:translate(-50%,-50%) rotate(-18deg)">821 - 822</div>
@@ -146,18 +123,13 @@
     <div class="mp-label" style="left:33.176%;top:51.590%;transform:translate(-50%,-50%) rotate(-18deg)">900 - 935</div>
     <div class="mp-label" style="left:40.716%;top:46.290%;transform:translate(-50%,-50%) rotate(-18deg)">935 - 942.05</div>
     <div class="mp-label" style="left:25.4%;top:62.548%;transform:translate(-50%,-50%) rotate(-18deg)">822.3 - 899.99</div>
-
     <div class="mp-label" style="left:32.3%;top:59.0%;transform:translate(-50%,-50%) rotate(-18deg)">821 - 822.3</div>
-    
     <div class="mp-label" style="left:38.868%;top:55.0%;transform:translate(-50%,-50%) rotate(-18deg)">813 - 821</div>
-    
     <div class="mp-label" style="left:26.861%;top:69.258%;transform:translate(-50%,-50%) rotate(-18deg)">794.1 - 800</div>
     <div class="mp-label" style="left:34.119%;top:65.194%;transform:translate(-50%,-50%) rotate(-18deg)">800 - 810</div>
     <div class="mp-label" style="left:40.905%;top:61.307%;transform:translate(-50%,-50%) rotate(-18deg)">811 - 812.9</div>
     <div class="mp-shelf" style="left:67.484%;top:19.788%;width:6.786%;height:4.240%;transform:rotate(20deg);"></div>
     <div class="mp-shelf" style="left:74.0%;top:24.0%;width:6.786%;height:4.240%;transform:rotate(20deg);"></div>
-    <!--<div class="mp-shelf" style="left:66.635%;top:24.558%;width:6.786%;height:3.887%;transform:rotate(20deg);"></div>-->
-    <!--<div class="mp-shelf" style="left:72.856%;top:28.445%;width:6.786%;height:3.887%;transform:rotate(20deg);"></div>-->
     <div class="mp-shelf" style="left:62.300%;top:30.035%;width:7.163%;height:4.594%;transform:rotate(18deg);"></div>
     <div class="mp-shelf" style="left:69.086%;top:34.099%;width:7.163%;height:4.594%;transform:rotate(18deg);"></div>
     <div class="mp-shelf" style="left:76.155%;top:38.163%;width:7.163%;height:4.594%;transform:rotate(18deg);"></div>
@@ -170,18 +142,17 @@
     <div class="mp-label" style="left:74.741%;top:20.671%;transform:translate(-50%,-50%) rotate(20deg)">BIO ROO - BIO Z</div>
     <div class="mp-label" style="left:74.175%;top:28.0%;transform:translate(-50%,-50%) rotate(20deg)">BIO LEE - BIO ROG</div>
     <div class="mp-label" style="left:73.233%;top:32.802%;transform:translate(-50%,-50%) rotate(18deg)">BIO A - BIO LAN</div>
-    <div class="mp-label" style="left:65.221%;top:35.216%;transform:translate(-50%,-50%) rotate(18deg)">973.03 - 974.9</div>
+    <div class="mp-label" style="left:65.221%;top:35.216%;transform:translate(-50%,-50%) rotate(18deg)">R973.03 - R974.9</div>
     <div class="mp-label" style="left:72.385%;top:39.5%;transform:translate(-50%,-50%) rotate(18deg)">Career</div>
     <div class="mp-label" style="left:79.171%;top:43.49%;transform:translate(-50%,-50%) rotate(18deg)">College</div>
-    <div class="mp-label" style="left:73.0%;top:46.5%;transform:translate(-50%,-50%) rotate(18deg)">800 - 973</div>
-    <div class="mp-label" style="left:65.975%;top:49.117%;transform:translate(-50%,-50%) rotate(18deg)">R500 - 571</div>
-    <div class="mp-label" style="left:71.913%;top:52.90%;transform:translate(-50%,-50%) rotate(18deg)">R576 - 639</div>
-    <div class="mp-label" style="left:78.794%;top:56.537%;transform:translate(-50%,-50%) rotate(18deg)">R640 - 796.4</div>
-    <div class="mp-label" style="left:66.5%;top:57.0%;transform:translate(-50%,-50%) rotate(18deg)">R364.1 - 459.9</div>
-    <div class="mp-label" style="left:73.0%;top:60.601%;transform:translate(-50%,-50%) rotate(18deg)">R80 - 364</div>
+    <div class="mp-label" style="left:73.0%;top:46.5%;transform:translate(-50%,-50%) rotate(18deg)">R800 - R973</div>
+    <div class="mp-label" style="left:65.975%;top:49.117%;transform:translate(-50%,-50%) rotate(18deg)">R500 - R571</div>
+    <div class="mp-label" style="left:71.913%;top:52.90%;transform:translate(-50%,-50%) rotate(18deg)">R576 - R639</div>
+    <div class="mp-label" style="left:78.794%;top:56.537%;transform:translate(-50%,-50%) rotate(18deg)">R640 - R796.4</div>
+    <div class="mp-label" style="left:66.5%;top:57.0%;transform:translate(-50%,-50%) rotate(18deg)">R364.1 - R459.9</div>
+    <div class="mp-label" style="left:73.0%;top:60.601%;transform:translate(-50%,-50%) rotate(18deg)">R80 - R364</div>
     <div class="mp-label" style="left:80.207%;top:65.004%;transform:translate(-50%,-50%) rotate(18deg)">Oprah Club</div>
     <div class="mp-label" style="left:68.615%;top:65.371%;transform:translate(-50%,-50%) rotate(18deg)">Graphic Novels</div>
-
     <div class="mp-label" style="left:79.0%;top:72.318%;transform:translate(-50%,-50%) rotate(18deg)">R001 - R70.99</div>
 
     <div class="mp-table" style="left:47.597%;top:49.470%;width:9.519%;height:3.357%;"></div>
@@ -190,92 +161,83 @@
     <div class="mp-door" style="left:98.115%;top:79.329%;width:1.885%;height:7.597%;"></div>
 
     <!-- HOTSPOTS (invisible, glow on search) -->
-    <div class="hot" data-type="range" data-low="391" data-high="551" style="left:2.262%;top:1.237%;width:6.692%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="551" data-high="616.8" style="left:9.048%;top:1.237%;width:6.880%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="616.8" data-high="641.5" style="left:16.211%;top:1.237%;width:6.880%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="641.5" data-high="741.5" style="left:23.280%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="741.5" data-high="799.9" style="left:30.443%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="topic" data-key="poetry" style="left:37.700%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="AAA" data-high="BLA" style="left:44.863%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="BLO" data-high="CLA" style="left:52.121%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="CLA" data-high="EMI" style="left:59.378%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="END" data-high="GRE" style="left:66.541%;top:1.237%;width:6.975%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="GRI" data-high="IZZ" style="left:73.798%;top:1.237%;width:6.786%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="JAC" data-high="LAW" style="left:80.867%;top:1.237%;width:6.880%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="LAY" data-high="OCO" style="left:88.030%;top:1.237%;width:6.786%;height:4.064%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="362.8" data-high="363.9" style="left:8.011%;top:15.371%;width:7.069%;height:3.710%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="364" data-high="371.8" style="left:15.269%;top:15.371%;width:6.975%;height:3.710%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="371.8" data-high="391" style="left:22.432%;top:15.371%;width:6.975%;height:3.710%;transform:rotate(0deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="341.5" data-high="362.76" style="left:-1.225%;top:21.908%;width:6.975%;height:3.887%;transform:rotate(-90deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="232" data-high="341.41" style="left:-1.178%;top:35.336%;width:6.880%;height:3.887%;transform:rotate(-90deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="305" data-high="323" style="left:-1.084%;top:49.117%;width:6.692%;height:3.887%;transform:rotate(-90deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="290" data-high="305" style="left:-1.131%;top:62.014%;width:6.786%;height:3.887%;transform:rotate(-90deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="000" data-high="289.3" style="left:-1.367%;top:75.618%;width:7.257%;height:3.887%;transform:rotate(-90deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="OLI" data-high="ROT" style="left:93.497%;top:13.251%;width:6.786%;height:3.887%;transform:rotate(90deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="ROT" data-high="STO" style="left:93.450%;top:26.502%;width:6.880%;height:3.887%;transform:rotate(90deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="STO" data-high="ZOO" style="left:93.591%;top:39.929%;width:6.598%;height:3.887%;transform:rotate(90deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="topic" data-key="spanish & book club" style="left:92.837%;top:52.473%;width:6.598%;height:7.067%;transform:rotate(90deg);transform-origin:50% 50%"></div>
-<!--    <div class="hot" data-type="topic" data-key="oversized reference" style="left:22.243%;top:21.555%;width:12.064%;height:3.887%;transform:rotate(-18deg);transform-origin:50% 50%"></div> -->
-    <div class="hot" data-type="topic" data-key="story collections" style="left:22.017%;top:27.721%;width:6.032%;height:3.887%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="topic" data-key="encyclopedias" style="left:27.747%;top:24.223%;width:6.032%;height:3.887%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="topic" data-key="old magazines" style="left:21.0%;top:33.7%;width:7.917%;height:2.473%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-  
-    <div class="hot" data-type="topic" data-key="free school supplies" style="left:32.0%;top:25.0%;width:10.556%;height:2.473%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-
-    <div class="hot" data-type="range" data-low="973" data-high="973.7" style="left:21.489%;top:35.159%;width:7.163%;height:4.594%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="973.7" data-high="973.92" style="left:28.464%;top:31.272%;width:7.163%;height:4.594%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="973.92" data-high="999" style="left:35.438%;top:27.208%;width:7.163%;height:4.594%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="973" data-high="973.3" style="left:22.055%;top:48.763%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="958" data-high="973" style="left:28.935%;top:45.053%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="943" data-high="957.9" style="left:36.004%;top:40.989%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="821" data-high="822" style="left:22.055%;top:48.763%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="900" data-high="935" style="left:28.935%;top:45.053%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="935" data-high="942.05" style="left:36.004%;top:40.989%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="822.3" data-high="899.99" style="left:22.526%;top:63.428%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="821" data-high="822.3" style="left:29.500%;top:59.541%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="813" data-high="821" style="left:36.381%;top:55.654%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="794.1" data-high="800" style="left:22.526%;top:63.428%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="800" data-high="810" style="left:29.500%;top:59.541%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="811" data-high="812.9" style="left:36.381%;top:55.654%;width:7.163%;height:4.947%;transform:rotate(-18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="BIO ROO" data-high="BIO Z" style="left:67.295%;top:21.731%;width:13.384%;height:4.240%;transform:rotate(20deg);transform-origin:50% 50%"></div>
-    
-    <div class="hot" data-type="range" data-low="BIO LEE" data-high="BIO ROG" style="left:66.447%;top:26.502%;width:13.384%;height:3.887%;transform:rotate(20deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="BIO A" data-high="BIO LAN" style="left:67.955%;top:30.565%;width:10.556%;height:2.473%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="973.03" data-high="974.9" style="left:62.300%;top:30.035%;width:7.163%;height:4.594%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="topic" data-key="career" style="left:69.086%;top:34.099%;width:7.163%;height:4.594%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="topic" data-key="college" style="left:76.155%;top:38.163%;width:7.163%;height:4.594%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="800" data-high="973" style="left:67.615%;top:45.03%;width:10.368%;height:2.473%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="R500" data-high="R571" style="left:62.394%;top:43.286%;width:7.163%;height:4.594%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="R576" data-high="R639" style="left:69.180%;top:47.350%;width:7.163%;height:4.594%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="R640" data-high="R796.4" style="left:76.155%;top:51.413%;width:7.163%;height:4.594%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="R364.1" data-high="R459.9" style="left:62.394%;top:58.304%;width:7.163%;height:4.594%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="R80" data-high="R364" style="left:69.180%;top:62.367%;width:7.163%;height:4.594%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="topic" data-key="graphic novels" style="left:64.373%;top:64.134%;width:8.483%;height:2.473%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="topic" data-key="oprah club" style="left:76.155%;top:66.254%;width:7.163%;height:4.947%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="range" data-low="R001" data-high="R70.99" style="left:76.155%;top:66.254%;width:7.163%;height:4.947%;transform:rotate(18deg);transform-origin:50% 50%"></div>
-    <div class="hot" data-type="topic" data-key="library desk" style="left:31.857%;top:84.099%;width:41.188%;height:14.134%;transform:rotate(0deg);transform-origin:50% 50%"></div>
+    <div class="hot" data-type="range" data-low="391" data-high="551" style="left:2.262%;top:1.237%;width:6.692%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="551" data-high="616.8" style="left:9.048%;top:1.237%;width:6.880%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="616.8" data-high="641.5" style="left:16.211%;top:1.237%;width:6.880%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="641.5" data-high="741.5" style="left:23.280%;top:1.237%;width:6.975%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="741.5" data-high="799.9" style="left:30.443%;top:1.237%;width:6.975%;height:4.064%"></div>
+    <div class="hot" data-type="topic" data-key="poetry" style="left:37.700%;top:1.237%;width:6.975%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="AAA" data-high="BLA" style="left:44.863%;top:1.237%;width:6.975%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="BLO" data-high="CLA" style="left:52.121%;top:1.237%;width:6.975%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="CLA" data-high="EMI" style="left:59.378%;top:1.237%;width:6.975%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="END" data-high="GRE" style="left:66.541%;top:1.237%;width:6.975%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="GRI" data-high="IZZ" style="left:73.798%;top:1.237%;width:6.786%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="JAC" data-high="LAW" style="left:80.867%;top:1.237%;width:6.880%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="LAY" data-high="OCO" style="left:88.030%;top:1.237%;width:6.786%;height:4.064%"></div>
+    <div class="hot" data-type="range" data-low="362.8" data-high="363.9" style="left:8.011%;top:15.371%;width:7.069%;height:3.710%"></div>
+    <div class="hot" data-type="range" data-low="364" data-high="371.8" style="left:15.269%;top:15.371%;width:6.975%;height:3.710%"></div>
+    <div class="hot" data-type="range" data-low="371.8" data-high="391" style="left:22.432%;top:15.371%;width:6.975%;height:3.710%"></div>
+    <div class="hot" data-type="range" data-low="341.5" data-high="362.76" style="left:-1.225%;top:21.908%;width:6.975%;height:3.887%;transform:rotate(-90deg)"></div>
+    <div class="hot" data-type="range" data-low="323" data-high="341.41" style="left:-1.178%;top:35.336%;width:6.880%;height:3.887%;transform:rotate(-90deg)"></div>
+    <div class="hot" data-type="range" data-low="305" data-high="323" style="left:-1.084%;top:49.117%;width:6.692%;height:3.887%;transform:rotate(-90deg)"></div>
+    <div class="hot" data-type="range" data-low="290" data-high="305" style="left:-1.131%;top:62.014%;width:6.786%;height:3.887%;transform:rotate(-90deg)"></div>
+    <div class="hot" data-type="range" data-low="000" data-high="289.3" style="left:-1.367%;top:75.618%;width:7.257%;height:3.887%;transform:rotate(-90deg)"></div>
+    <div class="hot" data-type="range" data-low="OLI" data-high="ROT" style="left:93.497%;top:13.251%;width:6.786%;height:3.887%;transform:rotate(90deg)"></div>
+    <div class="hot" data-type="range" data-low="ROT" data-high="STO" style="left:93.450%;top:26.502%;width:6.880%;height:3.887%;transform:rotate(90deg)"></div>
+    <div class="hot" data-type="range" data-low="STO" data-high="ZOO" style="left:93.591%;top:39.929%;width:6.598%;height:3.887%;transform:rotate(90deg)"></div>
+    <div class="hot" data-type="topic" data-key="spanish & book club" style="left:92.837%;top:52.473%;width:6.598%;height:7.067%;transform:rotate(90deg)"></div>
+    <div class="hot" data-type="topic" data-key="story collections" style="left:22.017%;top:27.721%;width:6.032%;height:3.887%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="topic" data-key="encyclopedias" style="left:27.747%;top:24.223%;width:6.032%;height:3.887%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="topic" data-key="old magazines" style="left:21.0%;top:33.7%;width:7.917%;height:2.473%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="topic" data-key="free school supplies" style="left:32.0%;top:25.0%;width:10.556%;height:2.473%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="973" data-high="973.7" style="left:21.489%;top:35.159%;width:7.163%;height:4.594%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="973.7" data-high="973.92" style="left:28.464%;top:31.272%;width:7.163%;height:4.594%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="973.92" data-high="999" style="left:35.438%;top:27.208%;width:7.163%;height:4.594%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="973" data-high="973.3" style="left:22.055%;top:48.763%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="958" data-high="973" style="left:28.935%;top:45.053%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="943" data-high="957.9" style="left:36.004%;top:40.989%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="821" data-high="822" style="left:22.055%;top:48.763%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="900" data-high="935" style="left:28.935%;top:45.053%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="935" data-high="942.05" style="left:36.004%;top:40.989%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="822.3" data-high="899.99" style="left:22.526%;top:63.428%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="821" data-high="822.3" style="left:29.500%;top:59.541%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="813" data-high="821" style="left:36.381%;top:55.654%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="794.1" data-high="800" style="left:22.526%;top:63.428%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="800" data-high="810" style="left:29.500%;top:59.541%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="811" data-high="812.9" style="left:36.381%;top:55.654%;width:7.163%;height:4.947%;transform:rotate(-18deg)"></div>
+    <div class="hot" data-type="range" data-low="BIO ROO" data-high="BIO Z" style="left:67.295%;top:21.731%;width:13.384%;height:4.240%;transform:rotate(20deg)"></div>
+    <div class="hot" data-type="range" data-low="BIO LEE" data-high="BIO ROG" style="left:66.447%;top:26.502%;width:13.384%;height:3.887%;transform:rotate(20deg)"></div>
+    <div class="hot" data-type="range" data-low="BIO A" data-high="BIO LAN" style="left:67.955%;top:30.565%;width:10.556%;height:2.473%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="range" data-low="R973.03" data-high="R974.9" style="left:62.300%;top:30.035%;width:7.163%;height:4.594%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="topic" data-key="career" style="left:69.086%;top:34.099%;width:7.163%;height:4.594%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="topic" data-key="college" style="left:76.155%;top:38.163%;width:7.163%;height:4.594%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="range" data-low="R800" data-high="R973" style="left:67.615%;top:45.03%;width:10.368%;height:2.473%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="range" data-low="R500" data-high="R571" style="left:62.394%;top:43.286%;width:7.163%;height:4.594%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="range" data-low="R576" data-high="R639" style="left:69.180%;top:47.350%;width:7.163%;height:4.594%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="range" data-low="R640" data-high="R796.4" style="left:76.155%;top:51.413%;width:7.163%;height:4.594%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="range" data-low="R364.1" data-high="R459.9" style="left:62.394%;top:58.304%;width:7.163%;height:4.594%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="range" data-low="R80" data-high="R364" style="left:69.180%;top:62.367%;width:7.163%;height:4.594%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="topic" data-key="graphic novels" style="left:64.373%;top:64.134%;width:8.483%;height:2.473%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="topic" data-key="oprah club" style="left:76.155%;top:66.254%;width:7.163%;height:4.947%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="range" data-low="R001" data-high="R70.99" style="left:76.155%;top:66.254%;width:7.163%;height:4.947%;transform:rotate(18deg)"></div>
+    <div class="hot" data-type="topic" data-key="library desk" style="left:31.857%;top:84.099%;width:41.188%;height:14.134%"></div>
   </div>
   </div>
 </div>
 
 <script>
-  /* TOKENIZE + COMPARE: splits codes into letter / number chunks so
-     "R220" vs "R80", or "BIO Nelson" vs "BIO Lee", compare correctly. */
   function tok(s) {
     return (s || '').toUpperCase().match(/[A-Z]+|\d+\.?\d*/g) || [];
   }
 
   function cmp(a, b) {
-    const A = tok(a);
-    const B = tok(b);
+    const A = tok(a), B = tok(b);
     const n = Math.max(A.length, B.length);
     for (let i = 0; i < n; i++) {
-      const x = A[i];
-      const y = B[i];
+      const x = A[i], y = B[i];
       if (x === undefined) return -1;
       if (y === undefined) return 1;
-      const xIsNumber = /^\d/.test(x);
-      const yIsNumber = /^\d/.test(y);
+      const xIsNumber = /^\d/.test(x), yIsNumber = /^\d/.test(y);
       if (xIsNumber && yIsNumber) {
         const diff = parseFloat(x) - parseFloat(y);
         if (diff) return diff < 0 ? -1 : 1;
@@ -287,7 +249,6 @@
     return 0;
   }
 
-  /* SEARCH */
   const shelves = [...document.querySelectorAll('.hot[data-type]')];
   const statusEl = document.getElementById('status');
   const inputEl  = document.getElementById('q');
@@ -303,8 +264,16 @@
     }
 
     const ql = q.toLowerCase();
+    // "Bio" or "Bio Smith": only ever look at the Biography shelves
+    const bioQuery = /^bio\b/i.test(q);
+    const bioOnly  = /^bio$/i.test(q);
 
     let matches = shelves.filter(s => {
+      if (bioQuery) {
+        return s.dataset.type === 'range'
+          && s.dataset.low.toUpperCase().startsWith('BIO')
+          && (bioOnly || (cmp(q, s.dataset.low) >= 0 && cmp(q, s.dataset.high) <= 0));
+      }
       if (s.dataset.type === 'topic') {
         const key = s.dataset.key;
         return key.includes(ql) || ql.includes(key);
@@ -327,7 +296,6 @@
       : `${matches.length} shelves match "${q}" — all glowing on the map.`;
   }
 
-  /* EVENTS */
   document.getElementById('go').addEventListener('click', () => search(inputEl.value));
   inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') search(inputEl.value); });
   document.querySelectorAll('.chip').forEach(chip => {
