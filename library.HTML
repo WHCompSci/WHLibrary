@@ -24,7 +24,7 @@
     #status { text-align:center; min-height:1.4em; margin:0 auto 12px; max-width:640px; font-size:.92rem; color:#f3e6c8; }
     #status.notfound { color:#e8a37b; }
     #status.found b { color:var(--gold); }
-    .mapscroll { overflow-x:auto; }
+    .mapscroll { overflow-x:auto; padding:0 34px; }
     .map {
       position:relative; width:100%; min-width:680px; aspect-ratio:1061 / 566;
       container-type:inline-size;
@@ -33,10 +33,11 @@
         repeating-linear-gradient(0deg,rgba(255,255,255,.09) 0 12px,rgba(0,0,0,.03) 12px 26px),
         #cfa56e;
       border:5px solid #6b4a2e; border-radius:3px; box-shadow:0 10px 26px rgba(0,0,0,.5);
-      overflow:hidden; font-family:Arial, Helvetica, sans-serif;
+      overflow:visible; font-family:Arial, Helvetica, sans-serif;
     }
     .map .mp-shelf { position:absolute; background:linear-gradient(#eaa870,#dc9455); border:1.5px solid #7a4622; box-shadow:1px 2px 2px rgba(60,30,10,.35); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#1c1108; font-size:1.05cqw; white-space:nowrap; }
     .map .mp-label { position:absolute; color:#1c1108; font-size:1cqw; white-space:nowrap; pointer-events:none; }
+    .map .mp-num { position:absolute; transform:translate(-50%,-50%); color:#fff; font-weight:bold; font-size:2.2cqw; line-height:1; pointer-events:none; text-shadow:0 1px 3px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.9); z-index:6; }
     .map .mp-desk  { position:absolute; background:linear-gradient(#a05a2d,#7f4321); border:2px solid #5c2f14; box-shadow:inset 0 0 0 2px #b8703f,2px 3px 4px rgba(50,25,10,.4); }
     .map .mp-table { position:absolute; background:linear-gradient(#bf7e48,#a5652f); border:1.5px solid #6b3f1f; box-shadow:1px 2px 2px rgba(60,30,10,.35); }
     .map .mp-door  { position:absolute; background:#6b3a1c; clip-path:polygon(100% 0,0 50%,100% 100%,100% 90%,20% 50%,100% 10%); }
@@ -154,6 +155,37 @@
     <div class="mp-label" style="left:80.207%;top:65.004%;transform:translate(-50%,-50%) rotate(18deg)">Oprah Club</div>
     <div class="mp-label" style="left:68.615%;top:65.371%;transform:translate(-50%,-50%) rotate(18deg)">Graphic Novels</div>
     <div class="mp-label" style="left:79.0%;top:72.318%;transform:translate(-50%,-50%) rotate(18deg)">R001 - R70.99</div>
+
+    <!-- SHELF NUMBERS -->
+    <!-- left wall, bottom to top -->
+    <div class="mp-num" style="left:-3%;top:77.56%">1</div>
+    <div class="mp-num" style="left:-3%;top:63.96%">2</div>
+    <div class="mp-num" style="left:-3%;top:51.06%">3</div>
+    <div class="mp-num" style="left:-3%;top:37.28%">4</div>
+    <div class="mp-num" style="left:-3%;top:23.85%">5</div>
+    <!-- inner row -->
+    <div class="mp-num" style="left:11.546%;top:21.6%">6</div>
+    <div class="mp-num" style="left:18.757%;top:21.6%">7</div>
+    <div class="mp-num" style="left:25.92%;top:21.6%">8</div>
+    <!-- top row -->
+    <div class="mp-num" style="left:5.608%;top:7.8%">9</div>
+    <div class="mp-num" style="left:12.488%;top:7.8%">10</div>
+    <div class="mp-num" style="left:19.651%;top:7.8%">11</div>
+    <div class="mp-num" style="left:26.768%;top:7.8%">12</div>
+    <div class="mp-num" style="left:33.931%;top:7.8%">13</div>
+    <div class="mp-num" style="left:41.188%;top:7.8%">14</div>
+    <div class="mp-num" style="left:48.351%;top:7.8%">15</div>
+    <div class="mp-num" style="left:55.609%;top:7.8%">16</div>
+    <div class="mp-num" style="left:62.866%;top:7.8%">17</div>
+    <div class="mp-num" style="left:70.029%;top:7.8%">18</div>
+    <div class="mp-num" style="left:77.191%;top:7.8%">19</div>
+    <div class="mp-num" style="left:84.307%;top:7.8%">20</div>
+    <div class="mp-num" style="left:91.423%;top:7.8%">21</div>
+    <!-- right wall, top to bottom -->
+    <div class="mp-num" style="left:92.5%;top:15.19%">22</div>
+    <div class="mp-num" style="left:92.5%;top:28.45%">23</div>
+    <div class="mp-num" style="left:92.5%;top:41.87%">24</div>
+    <div class="mp-num" style="left:92.5%;top:56%">25</div>
 
     <div class="mp-table" style="left:47.597%;top:49.470%;width:9.519%;height:3.357%;"></div>
     <div class="mp-desk" style="left:31.857%;top:84.099%;width:20.264%;height:14.134%;border-radius:46px 8px 8px 46px / 40px 8px 8px 40px"></div>
