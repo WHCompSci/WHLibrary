@@ -309,9 +309,18 @@
       statusEl.textContent = '';
       return;
     }
-    let q = originalQuery;
-    let matches = [];
-    if (/^FIC(?:\s|$)/i.test(q)) {
+    
+let q = originalQuery;
+let matches = [];
+
+// Route 741.5 directly to Graphic Novels.
+if (/^741\.5(?:\s|$)/i.test(q)) {
+  matches = shelves.filter(s =>
+    s.dataset.type === 'topic' &&
+    s.dataset.key === 'graphic novels'
+  );
+} else if (/^FIC(?:\s|$)/i.test(q)) {
+
       q = q.replace(/^FIC(?:\s+|$)/i,'').trim();
       if (!q) {
         statusEl.className = 'notfound';
