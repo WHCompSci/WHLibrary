@@ -302,6 +302,11 @@
   }
 
   function search(raw) {
+
+  // Redirect Graphic Novel call numbers.
+  if (/^\s*741\.5(?:\s|$)/.test(raw)) {
+    raw = 'Graphic Novels';
+  }
     const originalQuery = (raw || '').trim();
     shelves.forEach(s => s.classList.remove('glow'));
     if (!originalQuery) {
