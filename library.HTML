@@ -257,6 +257,7 @@
   </div>
 </div>
 
+
 <script>
   function tok(s) {
     return (s || '').toUpperCase().match(/[A-Z]+|\d+\.?\d*/g) || [];
@@ -265,11 +266,16 @@
   function cmp(a, b) {
     const A = tok(a), B = tok(b);
     const n = Math.max(A.length, B.length);
+
     for (let i = 0; i < n; i++) {
       const x = A[i], y = B[i];
+
       if (x === undefined) return -1;
       if (y === undefined) return 1;
-      const xIsNumber = /^\d/.test(x), yIsNumber = /^\d/.test(y);
+
+      const xIsNumber = /^\d/.test(x);
+      const yIsNumber = /^\d/.test(y);
+
       if (xIsNumber && yIsNumber) {
         const diff = parseFloat(x) - parseFloat(y);
         if (diff) return diff < 0 ? -1 : 1;
@@ -278,59 +284,157 @@
         if (diff) return diff;
       }
     }
+
     return 0;
   }
 
   const shelves = [...document.querySelectorAll('.hot[data-type]')];
   const statusEl = document.getElementById('status');
-  const inputEl  = document.getElementById('q');
+  const inputEl = document.getElementById('q');
+
+  // Identify and alphabetically sort all fiction shelves.
+  const fictionShelves = shelves.filter(s =>
+    s.dataset.type === 'range' &&
+    /^[A-Z]{3}$/.test(s.dataset.low) &&
+    /^[A-Z]{3}$/.test(s.dataset.high)
+  ).sort((a, b) =>
+    cmp(a.dataset.low, b.dataset.low)
+  );
+
+  // Search fiction without gaps between shelf ranges.
+  function findFiction(query) {
+    const author = query.toUpperCase().match(/[A-Z]+/);
+
+    if (!author || !fictionShelves.length) return [];
+
+    const key = author[0].slice(0, 3);
+    let selectedShelf = fictionShelves[0];
+
+    for (const shelf of fictionShelves) {
+      if (cmp(key, shelf.dataset.low) >= 0) {
+        selectedShelf = shelf;
+      } else {
+        break;
+      }
+    }
+
+    const matches = [selectedShelf];
+    const index = fictionShelves.indexOf(selectedShelf);
+
+    // Highlight both shelves when their boundaries overlap.
+    if (index > 0) {
+      const previous = fictionShelves[index - 1];
+
+      if (cmp(key, previous.dataset.high) <= 0) {
+        matches.unshift(previous);
+      }
+    }
+
+    return matches;
+  }
 
   function search(raw) {
-    const q = (raw || '').trim();
+    const originalQuery = (raw || '').trim();
+
     shelves.forEach(s => s.classList.remove('glow'));
 
-    if (!q) {
+    if (!originalQuery) {
       statusEl.className = '';
       statusEl.textContent = '';
       return;
     }
 
-    const ql = q.toLowerCase();
-    // "Bio" or "Bio Smith": only ever look at the Biography shelves
-    // "Bio " (with a space after) = biography shelves; plain "Bio" = normal author search (AAA-BLA)
-    const bioQuery = /^\s*bio\s/i.test(raw);
-    const bioOnly  = /^bio$/i.test(q);
+    let q = originalQuery;
+    let matches = [];
 
-    let matches = shelves.filter(s => {
+    // Remove FIC prefix from fiction call numbers.
+    const ficQuery = /^FIC(?:\s|$)/i.test(q);
+
+    if (ficQuery) {
+      q = q.replace(/^FIC(?:\s+|$)/i, '').trim();
+
+      if (!q) {
+        statusEl.className = 'notfound';
+        statusEl.textContent =
+          'Please enter the author letters after FIC.';
+        return;
+      }
+
+      matches = findFiction(q);
+
+    } else {
+      const ql = q.toLowerCase();
+      const bioQuery = /^\s*bio\s/i.test(raw);
+      const bioOnly = /^bio$/i.test(q);
+
       if (bioQuery) {
-        return s.dataset.type === 'range'
-          && s.dataset.low.toUpperCase().startsWith('BIO')
-          && (bioOnly || (cmp(q, s.dataset.low) >= 0 && cmp(q, s.dataset.high) <= 0));
+        matches = shelves.filter(s =>
+          s.dataset.type === 'range' &&
+          s.dataset.low.toUpperCase().startsWith('BIO') &&
+          (bioOnly ||
+            (cmp(q, s.dataset.low) >= 0 &&
+             cmp(q, s.dataset.high) <= 0))
+        );
+
+      } else {
+
+        // Check named library sections first.
+        matches = shelves.filter(s =>
+          s.dataset.type === 'topic' &&
+          (s.dataset.key.includes(ql) ||
+           ql.includes(s.dataset.key))
+        );
+
+        if (!matches.length) {
+
+          // Plain author names are treated as fiction.
+          if (/^[A-Z]+$/i.test(q)) {
+            matches = findFiction(q);
+
+          } else {
+
+            // Preserve nonfiction and reference searches.
+            matches = shelves.filter(s =>
+              s.dataset.type === 'range' &&
+              !fictionShelves.includes(s) &&
+              cmp(q, s.dataset.low) >= 0 &&
+              cmp(q, s.dataset.high) <= 0
+            );
+          }
+        }
       }
-      if (s.dataset.type === 'topic') {
-        const key = s.dataset.key;
-        return key.includes(ql) || ql.includes(key);
-      }
-      return cmp(q, s.dataset.low) >= 0 && cmp(q, s.dataset.high) <= 0;
-    });
+    }
 
     if (matches.length === 0) {
       statusEl.className = 'notfound';
-      statusEl.textContent = `No shelf matches "${q}". Check the code and try again, or ask the desk.`;
+      statusEl.textContent =
+        `No shelf matches "${originalQuery}". Check the code and try again, or ask the desk.`;
       return;
     }
 
     matches.forEach(s => s.classList.add('glow'));
-    matches[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+
+    matches[0].scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'center'
+    });
 
     statusEl.className = 'found';
-    statusEl.innerHTML = matches.length === 1
+
+    statusEl.textContent = matches.length === 1
       ? 'Found it — glowing on the map.'
-      : `${matches.length} shelves match "${q}" — all glowing on the map.`;
+      : `${matches.length} shelves match "${originalQuery}" — all glowing on the map.`;
   }
 
-  document.getElementById('go').addEventListener('click', () => search(inputEl.value));
-  inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') search(inputEl.value); });
+  document.getElementById('go').addEventListener('click', () =>
+    search(inputEl.value)
+  );
+
+  inputEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter') search(inputEl.value);
+  });
+
   document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       inputEl.value = chip.textContent;
@@ -338,5 +442,6 @@
     });
   });
 </script>
+
 </body>
 </html>
